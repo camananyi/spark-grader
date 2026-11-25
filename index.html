@@ -4,31 +4,36 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SPARK Grader</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e8590c'/%3E%3Cpath d='M18 4 8 18h7l-2 10 11-15h-7z' fill='white'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2312325f'/%3E%3Cpath d='M16 5l3.2 6.6 7.3 1-5.3 5.1 1.3 7.2L16 21.5l-6.5 3.4 1.3-7.2-5.3-5.1 7.3-1z' fill='%23e2c58a'/%3E%3C/svg%3E">
 <style>
   :root {
-    --bg: #fbf8f4; --card: #ffffff; --ink: #1f1a17; --muted: #6b625b; --line: #e7dfd6;
-    --accent: #e8590c; --accent-ink: #ffffff; --accent-soft: #fff1e8;
+    /* SPARK colors: navy, bright blue and gold, from the SPARK website */
+    --navy: #12325f; --navy-ink: #ffffff; --gold: #e2c58a;
+    --bg: #f8f8f8; --card: #ffffff; --ink: #1c2433; --muted: #5b6478; --line: #dde2ea;
+    --accent: #12325f; --accent-ink: #ffffff; --accent-soft: #eaf1fd; --link: #2f6fe4;
     --good: #2b8a3e; --good-soft: #ebfbee; --bad: #c92a2a; --bad-soft: #fff5f5; --wait: #868e96; --wait-soft: #f1f3f5;
     --radius: 14px;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #17130f; --card: #221c17; --ink: #f3ede7; --muted: #b3a89e; --line: #3a312a;
-      --accent: #ff7a2e; --accent-ink: #1b120b; --accent-soft: #3a2416;
-      --good: #69db7c; --good-soft: #17301d; --bad: #ff8787; --bad-soft: #3a1c1c; --wait: #adb5bd; --wait-soft: #2b2724;
+      --navy: #0c2242; --navy-ink: #ffffff; --gold: #e8cf9c;
+      --bg: #0e1728; --card: #16223a; --ink: #eef2f8; --muted: #a9b4c8; --line: #2a3a58;
+      --accent: #4f8bf0; --accent-ink: #0b1526; --accent-soft: #1b2d4d; --link: #7fa9f5;
+      --good: #69db7c; --good-soft: #17301d; --bad: #ff8787; --bad-soft: #3a1c1c; --wait: #adb5bd; --wait-soft: #222d42;
     }
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink);
-    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    font: 16px/1.5 "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif; }
   main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
-  header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-  .logo { width: 40px; height: 40px; border-radius: 10px; background: var(--accent); display: grid; place-items: center; flex: none; }
-  h1 { font-size: 1.6rem; margin: 0; letter-spacing: -0.01em; }
+  .topbar { background: var(--navy); color: var(--navy-ink); }
+  .topbar-inner { max-width: 760px; margin: 0 auto; padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+  .brand { font-size: 1.35rem; font-weight: 500; letter-spacing: .01em; color: var(--navy-ink); text-decoration: none; }
+  .brand span { color: var(--gold); }
+  h1 { font-size: 2rem; font-weight: 400; margin: 0 0 6px; color: var(--link); letter-spacing: -0.01em; }
   .lead { color: var(--muted); margin: 0 0 24px; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
-  .step { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); margin: 0 0 4px; }
+  .step { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--link); margin: 0 0 4px; }
   h2 { font-size: 1.15rem; margin: 0 0 12px; }
   label { display: block; font-weight: 600; font-size: .9rem; margin: 0 0 4px; }
   input[type=email], input[type=text] { width: 100%; font: inherit; padding: 10px 12px; border-radius: 10px;
@@ -37,18 +42,18 @@
   @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
   button { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 10px 18px; cursor: pointer;
     background: var(--accent); color: var(--accent-ink); }
-  button.secondary { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  button.secondary { background: transparent; color: var(--link); border: 1px solid var(--link); }
   button:disabled { opacity: .5; cursor: not-allowed; }
   .msg { margin: 10px 0 0; font-size: .95rem; }
   .msg.error { color: var(--bad); }
   .signed-in { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .drop { border: 2px dashed var(--line); border-radius: var(--radius); padding: 36px 16px; text-align: center;
     cursor: pointer; transition: border-color .15s, background .15s; }
-  .drop:hover, .drop:focus-visible, .drop.over { border-color: var(--accent); background: var(--accent-soft); outline: none; }
+  .drop:hover, .drop:focus-visible, .drop.over { border-color: var(--link); background: var(--accent-soft); outline: none; }
   .drop strong { display: block; font-size: 1.1rem; margin-bottom: 4px; }
   .drop span { color: var(--muted); font-size: .95rem; }
   .status { display: flex; align-items: center; gap: 10px; color: var(--muted); margin: 12px 0 0; }
-  .spinner { width: 18px; height: 18px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--accent);
+  .spinner { width: 18px; height: 18px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--link);
     animation: spin .8s linear infinite; flex: none; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .summary { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -65,20 +70,21 @@
   .help { margin-top: 2px; color: var(--muted); }
   .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
   .done { background: var(--good-soft); color: var(--ink); border-radius: 10px; padding: 12px 14px; margin-top: 12px; }
-  .banner { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; font-size: .95rem; }
+  .banner { background: var(--accent-soft); border-left: 4px solid var(--gold); border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; font-size: .95rem; }
   code { font: .92em ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--wait-soft); padding: 1px 5px; border-radius: 5px; white-space: nowrap; }
   .hidden { display: none !important; }
   footer { color: var(--muted); font-size: .85rem; text-align: center; margin-top: 32px; }
 </style>
 </head>
 <body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l3.6 7.5 8.2 1.2-6 5.8 1.4 8.2L16 21.8l-7.3 3.9 1.4-8.2-6-5.8 8.2-1.2z" fill="var(--gold)"/></svg>
+    <span class="brand">SPARK <span>Grader</span></span>
+  </div>
+</header>
 <main>
-  <header>
-    <div class="logo" aria-hidden="true">
-      <svg width="22" height="22" viewBox="0 0 32 32"><path d="M18 4 8 18h7l-2 10 11-15h-7z" fill="white"/></svg>
-    </div>
-    <h1>SPARK Grader</h1>
-  </header>
+  <h1>Check your work</h1>
   <p class="lead">Check your assignment, fix anything with a <code>:(</code>, then submit it to your mentors.</p>
 
   <div id="practice" class="banner hidden">Practice mode: you can check files, but submitting is turned off.</div>

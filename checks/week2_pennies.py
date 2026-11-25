@@ -10,8 +10,9 @@ FILLER_COMMENT = re.compile(r"^#\s*(line\s*\d*|code|comment|todo|\d+|stuff|here)
 
 
 def answer(pennies, days):
-    """The official answer in dollars: the pennies double once per day."""
-    return pennies * 2 ** days / 100
+    """The official answer in dollars: what you have on the last day.
+    Day 1 is the starting pennies, and they double each day after that, so they double (days - 1) times."""
+    return pennies * 2 ** (days - 1) / 100
 
 
 def _numbers(out):
